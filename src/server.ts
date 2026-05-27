@@ -26,5 +26,5 @@ app.use("/health", (_, res) => {
 });
 
 app.listen(port, () => {
-  console.log("app runnion on port: " + port);
+  console.log("app running on port: " + port);
 });
