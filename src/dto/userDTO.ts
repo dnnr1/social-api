@@ -8,6 +8,8 @@ export interface CreateUserResponseDTO {
   name: string;
   email: string;
   role: string;
+  bio: string | null;
+  status: string;
   created_at: Date;
   updated_at: Date;
 }
