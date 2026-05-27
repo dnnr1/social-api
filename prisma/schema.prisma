@@ -17,4 +17,16 @@ model User {
   status     String   @default("active")
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  posts      Post[]
+}
+
+model Post {
+  id         String   @id @default(uuid())
+  userId     String
+  content    String
+  media      String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  visibility String   @default("public")
+  user       User     @relation(fields: [userId], references: [id])
 }
