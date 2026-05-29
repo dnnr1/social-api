@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import bcrypt from "bcrypt";
-import encrypt from "./encrypt.js";
+import encrypt from "../../src/utils/encrypt.js";
 
 vi.mock("bcrypt");
 

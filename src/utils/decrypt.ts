@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 
-function decrypt(value: string, hash: string) {
-  return bcrypt.compare(value, hash);
+async function decrypt(value: string, hash: string): Promise<boolean> {
+  return await bcrypt.compare(value, hash);
 }
 
 export default decrypt;

@@ -9,7 +9,6 @@ const errorHandler = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   __: NextFunction,
 ) => {
-  console.log(err);
   if (err instanceof z.ZodError) {
     res.status(400).json({
       ok: false,
