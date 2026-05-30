@@ -5,13 +5,17 @@ import {
   loginUserService,
 } from "../services/user-service.js";
 import { userRegisterSchema } from "../schemas.js";
-import jwt from "jsonwebtoken";
+import tokenGenerate from "../utils/tokenGenerate.js";
+import { TokenPayload } from "../types/types.js";
 
 export async function createUserController(req: Request, res: Response) {
   const user = userRegisterSchema.parse(req.body);
   const createdUser = await createUserService(user);
 
-  const token = await jwt.sign({ user }, process.env.JWT_SECRET as string);
+  const token = tokenGenerate({
+    id: createdUser.id,
+    role: createdUser.role,
+  } as TokenPayload);
 
   res.cookie("token", token, {
     httpOnly: true,
@@ -22,16 +26,18 @@ export async function createUserController(req: Request, res: Response) {
   return res.status(201).json({
     code: 201,
     message: "User created successfully!",
-    data: { ...createdUser, password: undefined },
+    data: createdUser,
   });
 }
 
 export async function loginUserController(req: Request, res: Response) {
   const data = userLoginSchema.parse(req.body);
-
   const user = await loginUserService(data);
 
-  const token = await jwt.sign({ user }, process.env.JWT_SECRET as string);
+  const token = tokenGenerate({
+    id: user.id,
+    role: user.role,
+  } as TokenPayload);
 
   res.cookie("token", token, {
     httpOnly: true,

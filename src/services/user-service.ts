@@ -4,17 +4,24 @@ import {
   createUserRepository,
   findUserByEmailRepository,
 } from "../repositories/user-repository.js";
+import decrypt from "../utils/decrypt.js";
+import encrypt from "../utils/encrypt.js";
 
 export async function createUserService(data: CreateUserDTO) {
-  const { email } = data;
+  const { email, password } = data;
 
   const userAlreadyExists = await findUserByEmailRepository(email);
 
   if (userAlreadyExists) {
-    throw new AppError("User already exists", 400);
+    throw new AppError("Email already in use", 400);
   }
 
-  const user = await createUserRepository(data);
+  const hashedPassword = await encrypt(password);
+
+  const user = await createUserRepository({
+    ...data,
+    password: hashedPassword,
+  });
 
   return user;
 }
@@ -22,9 +29,13 @@ export async function createUserService(data: CreateUserDTO) {
 export async function loginUserService(data: LoginUserDTO) {
   const userDb = await findUserByEmailRepository(data.email);
 
-  console.log(userDb, data);
+  if (!userDb) {
+    throw new AppError("User not found", 404);
+  }
 
-  if (userDb?.password !== data.password) {
+  const checkPassword = await decrypt(data.password, userDb.password);
+
+  if (!checkPassword) {
     throw new AppError("Email or Password incorrect", 400);
   }
 

@@ -1,7 +1,7 @@
 import express from "express";
 import cors, { type CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
-import route from "./routes/router.js";
+import route from "./routes.js";
 import errorHandler from "./utils/errorHandler.js";
 import helmet from "helmet";
 
@@ -10,7 +10,7 @@ const baseAPI = "/api/v1";
 
 const corsConfig: CorsOptions = {
   origin: "localhost",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
 };
 

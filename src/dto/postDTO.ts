@@ -13,3 +13,17 @@ export interface CreatePostReponseDTO {
   created_at: Date;
   updated_at: Date;
 }
+
+export interface EditPostDTO {
+  id: string;
+  userId: string;
+  visibility?: string;
+  content?: string;
+  media?: string;
+}
+
+export interface EditPostResponseDTO extends CreatePostReponseDTO {}
+
+export interface GetAllPostsResponseDTO extends CreatePostReponseDTO {}
+
+export interface GetPostResponseDTO extends CreatePostReponseDTO {}

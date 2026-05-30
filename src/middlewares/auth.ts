@@ -1,10 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-
-type TokenPayload = {
-  id: string;
-  role: string;
-};
+import { TokenPayload } from "../types/types.js";
 
 const secret = process.env.JWT_SECRET;
 

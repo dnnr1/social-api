@@ -12,7 +12,14 @@ export const userLoginSchema = z.object({
 });
 
 export const postCreateSchema = z.object({
-  userId: z.string(),
   content: z.string(),
   media: z.string(),
 });
+
+export const postEditSchema = z
+  .object({
+    content: z.string(),
+    media: z.string(),
+    visibility: z.string(),
+  })
+  .partial();
