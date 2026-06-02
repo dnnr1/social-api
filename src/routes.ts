@@ -22,6 +22,11 @@ import {
   getFollowingController,
   unfollowUserController,
 } from "./controllers/follow-controller.js";
+import {
+  getPostLikesController,
+  likePostController,
+  unlikePostController,
+} from "./controllers/like-controller.js";
 
 const route = Router();
 
@@ -38,6 +43,9 @@ route.post("/post/:id/comment", createCommentController);
 route.get("/post/:id/comments", getPostCommentsController);
 route.get("/comment/:id", getCommentController);
 route.patch("/comment/:id", editCommentController);
+route.post("/post/:id/like", likePostController);
+route.delete("/post/:id/like", unlikePostController);
+route.get("/post/:id/likes", getPostLikesController);
 route.post("/user/:id/follow", followUserController);
 route.delete("/user/:id/follow", unfollowUserController);
 route.get("/user/:id/followers", getFollowersController);

@@ -20,6 +20,7 @@ model User {
   comments   Comment[]
   followers  Follow[]  @relation("UserFollowers")
   following  Follow[]  @relation("UserFollowing")
+  likes      Like[]
 }
 
 model Post {
@@ -32,6 +33,7 @@ model Post {
   visibility String    @default("public")
   user       User      @relation(fields: [userId], references: [id])
   comments   Comment[]
+  likes      Like[]
 }
 
 model Comment {
@@ -53,4 +55,14 @@ model Follow {
   following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@id([followerId, followingId])
+}
+
+model Like {
+  userId     String
+  postId     String
+  created_at DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([userId, postId])
 }
