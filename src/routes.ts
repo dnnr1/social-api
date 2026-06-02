@@ -16,6 +16,12 @@ import {
   getCommentController,
   getPostCommentsController,
 } from "./controllers/comment-controller.js";
+import {
+  followUserController,
+  getFollowersController,
+  getFollowingController,
+  unfollowUserController,
+} from "./controllers/follow-controller.js";
 
 const route = Router();
 
@@ -32,5 +38,9 @@ route.post("/post/:id/comment", createCommentController);
 route.get("/post/:id/comments", getPostCommentsController);
 route.get("/comment/:id", getCommentController);
 route.patch("/comment/:id", editCommentController);
+route.post("/user/:id/follow", followUserController);
+route.delete("/user/:id/follow", unfollowUserController);
+route.get("/user/:id/followers", getFollowersController);
+route.get("/user/:id/following", getFollowingController);
 
 export default route;
