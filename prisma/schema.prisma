@@ -7,25 +7,38 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   name       String
-  email      String   @unique
+  email      String    @unique
   password   String
-  role       String   @default("user")
+  role       String    @default("user")
   bio        String?
-  status     String   @default("active")
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  status     String    @default("active")
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
   posts      Post[]
+  comments   Comment[]
 }
 
 model Post {
-  id         String   @id @default(uuid())
+  id         String    @id @default(uuid())
   userId     String
   content    String
   media      String
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  visibility String    @default("public")
+  user       User      @relation(fields: [userId], references: [id])
+  comments   Comment[]
+}
+
+model Comment {
+  id         String   @id @default(uuid())
+  userId     String
+  postId     String
+  content    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  visibility String   @default("public")
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }

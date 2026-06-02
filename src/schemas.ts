@@ -23,3 +23,13 @@ export const postEditSchema = z
     visibility: z.string(),
   })
   .partial();
+
+export const commentCreateSchema = z.object({
+  content: z.string(),
+});
+
+export const commentEditSchema = z
+  .object({
+    content: z.string(),
+  })
+  .partial();
