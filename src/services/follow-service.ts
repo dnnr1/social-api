@@ -7,25 +7,26 @@ import {
   findFollowingByUserIdRepository,
 } from "../repositories/follow-repository.js";
 import { findUserByIdRepository } from "../repositories/user-repository.js";
+import { HTTP_BAD_REQUEST, HTTP_NOT_FOUND } from "../constants/httpStatus.js";
 
 export async function followUserService(
   followerId: string,
   followingId: string,
 ) {
   if (followerId === followingId) {
-    throw new AppError("Cannot follow yourself", 400);
+    throw new AppError("Cannot follow yourself", HTTP_BAD_REQUEST);
   }
 
   const follower = await findUserByIdRepository(followerId);
 
   if (!follower) {
-    throw new AppError("User not found", 404);
+    throw new AppError("User not found", HTTP_NOT_FOUND);
   }
 
   const following = await findUserByIdRepository(followingId);
 
   if (!following) {
-    throw new AppError("User not found", 404);
+    throw new AppError("User not found", HTTP_NOT_FOUND);
   }
 
   const alreadyFollowing = await findFollowRepository({
@@ -34,7 +35,7 @@ export async function followUserService(
   });
 
   if (alreadyFollowing) {
-    throw new AppError("Already following", 400);
+    throw new AppError("Already following", HTTP_BAD_REQUEST);
   }
 
   return await createFollowRepository({ followerId, followingId });
@@ -45,13 +46,13 @@ export async function unfollowUserService(
   followingId: string,
 ) {
   if (followerId === followingId) {
-    throw new AppError("Cannot unfollow yourself", 400);
+    throw new AppError("Cannot unfollow yourself", HTTP_BAD_REQUEST);
   }
 
   const follow = await findFollowRepository({ followerId, followingId });
 
   if (!follow) {
-    throw new AppError("Follow relationship not found", 404);
+    throw new AppError("Follow relationship not found", HTTP_NOT_FOUND);
   }
 
   return await deleteFollowRepository({ followerId, followingId });
@@ -61,7 +62,7 @@ export async function getFollowersService(userId: string) {
   const user = await findUserByIdRepository(userId);
 
   if (!user) {
-    throw new AppError("User not found", 404);
+    throw new AppError("User not found", HTTP_NOT_FOUND);
   }
 
   return await findFollowersByUserIdRepository(userId);
@@ -71,7 +72,7 @@ export async function getFollowingService(userId: string) {
   const user = await findUserByIdRepository(userId);
 
   if (!user) {
-    throw new AppError("User not found", 404);
+    throw new AppError("User not found", HTTP_NOT_FOUND);
   }
 
   return await findFollowingByUserIdRepository(userId);

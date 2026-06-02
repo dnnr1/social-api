@@ -4,6 +4,7 @@ import {
   likePostService,
   unlikePostService,
 } from "../services/like-service.js";
+import { HTTP_CREATED, HTTP_OK } from "../constants/httpStatus.js";
 
 export async function likePostController(req: Request, res: Response) {
   const userId = req.user!.id;
@@ -11,8 +12,8 @@ export async function likePostController(req: Request, res: Response) {
 
   const like = await likePostService(userId, postId);
 
-  return res.status(201).json({
-    code: 201,
+  return res.status(HTTP_CREATED).json({
+    code: HTTP_CREATED,
     message: "Post liked successfully!",
     data: like,
   });
@@ -24,8 +25,8 @@ export async function unlikePostController(req: Request, res: Response) {
 
   const like = await unlikePostService(userId, postId);
 
-  return res.status(200).json({
-    code: 200,
+  return res.status(HTTP_OK).json({
+    code: HTTP_OK,
     message: "Post unliked successfully!",
     data: like,
   });
@@ -36,8 +37,8 @@ export async function getPostLikesController(req: Request, res: Response) {
 
   const likes = await getPostLikesService(postId);
 
-  return res.status(200).json({
-    code: 200,
+  return res.status(HTTP_OK).json({
+    code: HTTP_OK,
     message: "Likes retrieved successfully!",
     data: likes,
   });

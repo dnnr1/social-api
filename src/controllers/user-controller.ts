@@ -5,6 +5,7 @@ import {
   loginUserService,
 } from "../services/user-service.js";
 import { userRegisterSchema } from "../schemas.js";
+import { HTTP_CREATED, HTTP_OK } from "../constants/httpStatus.js";
 import tokenGenerate from "../utils/tokenGenerate.js";
 import { TokenPayload } from "../types/types.js";
 
@@ -23,8 +24,8 @@ export async function createUserController(req: Request, res: Response) {
     sameSite: true,
   });
 
-  return res.status(201).json({
-    code: 201,
+  return res.status(HTTP_CREATED).json({
+    code: HTTP_CREATED,
     message: "User created successfully!",
     data: createdUser,
   });
@@ -45,8 +46,8 @@ export async function loginUserController(req: Request, res: Response) {
     sameSite: true,
   });
 
-  return res.status(200).json({
-    code: 200,
+  return res.status(HTTP_OK).json({
+    code: HTTP_OK,
     message: "User logged successfully!",
     data: { ...user, password: undefined },
   });

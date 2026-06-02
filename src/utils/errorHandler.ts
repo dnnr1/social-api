@@ -1,6 +1,10 @@
 import type { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import AppError from "../appError.js";
+import {
+  HTTP_BAD_REQUEST,
+  HTTP_INTERNAL_SERVER_ERROR,
+} from "../constants/httpStatus.js";
 
 const errorHandler = (
   err: Error | z.ZodError | unknown,
@@ -10,9 +14,9 @@ const errorHandler = (
   __: NextFunction,
 ) => {
   if (err instanceof z.ZodError) {
-    res.status(400).json({
+    res.status(HTTP_BAD_REQUEST).json({
       ok: false,
-      status: 400,
+      status: HTTP_BAD_REQUEST,
       message: "Validation error",
       errors: err.issues,
     });
@@ -28,9 +32,9 @@ const errorHandler = (
     return;
   }
 
-  res.status(500).json({
+  res.status(HTTP_INTERNAL_SERVER_ERROR).json({
     ok: false,
-    status: 500,
+    status: HTTP_INTERNAL_SERVER_ERROR,
     message: err instanceof Error ? err.message : "Internal server error",
   });
 };

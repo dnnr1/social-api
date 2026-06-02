@@ -6,14 +6,15 @@ import {
   getAllPosts,
   getPostService,
 } from "../services/post-service.js";
+import { HTTP_CREATED, HTTP_OK } from "../constants/httpStatus.js";
 
 export async function getAllPostsController(req: Request, res: Response) {
   const userId = req.user!.id;
 
   const posts = await getAllPosts(userId);
 
-  return res.status(200).json({
-    code: 200,
+  return res.status(HTTP_OK).json({
+    code: HTTP_OK,
     message: "Posts retrieved successfully!",
     data: posts,
   });
@@ -24,8 +25,8 @@ export async function getPostController(req: Request, res: Response) {
 
   const post = await getPostService(postId);
 
-  return res.status(200).json({
-    code: 200,
+  return res.status(HTTP_OK).json({
+    code: HTTP_OK,
     message: "Post retrieved successfully!",
     data: post,
   });
@@ -37,8 +38,8 @@ export async function createPostController(req: Request, res: Response) {
 
   const newPost = await createPostService({ ...post, userId });
 
-  return res.status(201).json({
-    code: 201,
+  return res.status(HTTP_CREATED).json({
+    code: HTTP_CREATED,
     message: "Post created successfully!",
     data: newPost,
   });
@@ -55,8 +56,8 @@ export async function editPostController(req: Request, res: Response) {
     id: postId,
   });
 
-  return res.status(201).json({
-    code: 201,
+  return res.status(HTTP_CREATED).json({
+    code: HTTP_CREATED,
     message: "Post edited successfully!",
     data: editedPost,
   });
