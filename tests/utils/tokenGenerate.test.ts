@@ -10,7 +10,7 @@ describe("tokenGenerate", () => {
 
     process.env.JWT_SECRET = "secret";
 
-    const result = tokenGenerate("123");
+    const result = tokenGenerate({ data: "123" });
 
     expect(jwt.sign).toHaveBeenCalledWith({ data: "123" }, "secret");
 
