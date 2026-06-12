@@ -5,6 +5,7 @@ import route from "./routes.js";
 import errorHandler from "./utils/errorHandler.js";
 import helmet from "helmet";
 import { config, validateConfig } from "./config/index.js";
+import { rateLimiter } from "./middlewares/rateLimiter.js";
 
 validateConfig();
 
@@ -22,6 +23,7 @@ app.use(cors(corsConfig));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(rateLimiter());
 app.use(baseAPI, route);
 app.use(errorHandler);
 
