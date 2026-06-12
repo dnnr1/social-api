@@ -38,7 +38,7 @@ export async function findPostByIdRepository(
   id: string,
 ): Promise<GetPostResponseDTO | null> {
   const cacheKey = buildCacheKey("post", "id", id);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<GetPostResponseDTO | null>(cacheKey);
   if (cached) return cached;
 
   const post = await prisma.post.findUnique({ where: { id } });
@@ -56,7 +56,7 @@ export async function findPostsByUserIdRepository(
   limit: number = 20,
 ): Promise<GetAllPostsResponseDTO[]> {
   const cacheKey = buildCacheKey("post", "user", userId, `skip:${skip}`, `limit:${limit}`);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<GetAllPostsResponseDTO[]>(cacheKey);
   if (cached) return cached;
 
   const posts = await prisma.post.findMany({

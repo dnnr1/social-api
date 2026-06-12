@@ -51,12 +51,12 @@ describe("like-controller", () => {
 
     vi.mocked(getPostLikesService).mockResolvedValue(likes as any);
 
-    const req = { params: { id: "post-1" } } as any;
+    const req = { params: { id: "post-1" }, pagination: { skip: 0, limit: 20 } } as any;
     const res = createRes();
 
     await getPostLikesController(req, res);
 
-    expect(getPostLikesService).toHaveBeenCalledWith("post-1");
+    expect(getPostLikesService).toHaveBeenCalledWith("post-1", 0, 20);
     expect(res.status).toHaveBeenCalledWith(HTTP_OK);
   });
 

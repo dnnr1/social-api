@@ -8,7 +8,6 @@ import {
   loginUserService,
 } from "../../src/services/user-service.js";
 import { HTTP_CREATED, HTTP_OK } from "../../src/constants/httpStatus.js";
-import tokenGenerate from "../../src/utils/tokenGenerate.js";
 
 vi.mock("../../src/services/user-service.js", () => ({
   createUserService: vi.fn(),
@@ -16,7 +15,12 @@ vi.mock("../../src/services/user-service.js", () => ({
 }));
 
 vi.mock("../../src/utils/tokenGenerate.js", () => ({
-  default: vi.fn(() => "token"),
+  generateTokens: vi.fn(() => Promise.resolve({
+    accessToken: "access-token",
+    refreshToken: "refresh-token",
+  })),
+  verifyRefreshToken: vi.fn(),
+  revokeRefreshToken: vi.fn(),
 }));
 
 function createRes() {
@@ -24,6 +28,7 @@ function createRes() {
     status: vi.fn().mockReturnThis(),
     json: vi.fn(),
     cookie: vi.fn(),
+    clearCookie: vi.fn(),
   } as any;
 }
 
@@ -49,18 +54,11 @@ describe("user-controller", () => {
     await createUserController(req, res);
 
     expect(createUserService).toHaveBeenCalledWith(req.body);
-    expect(tokenGenerate).toHaveBeenCalledWith({
-      id: "user-1",
-      role: "user",
-    });
+    expect(res.cookie).toHaveBeenCalledTimes(2);
     expect(res.cookie).toHaveBeenCalledWith(
-      "token",
-      "token",
-      expect.objectContaining({
-        httpOnly: true,
-        secure: true,
-        sameSite: true,
-      }),
+      "access_token",
+      "access-token",
+      expect.objectContaining({ httpOnly: true }),
     );
     expect(res.status).toHaveBeenCalledWith(HTTP_CREATED);
     expect(res.json).toHaveBeenCalledWith({

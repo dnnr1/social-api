@@ -38,7 +38,7 @@ export async function findLikeRepository(
   const { userId, postId } = data;
 
   const cacheKey = buildCacheKey("like", userId, postId);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<LikeResponseDTO | null>(cacheKey);
   if (cached) return cached;
 
   const like = await prisma.like.findUnique({
@@ -60,7 +60,7 @@ export async function findLikesByPostIdRepository(
   limit: number = 20,
 ): Promise<GetPostLikesResponseDTO[]> {
   const cacheKey = buildCacheKey("like", "post", postId, `skip:${skip}`, `limit:${limit}`);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<GetPostLikesResponseDTO[]>(cacheKey);
   if (cached) return cached;
 
   const likes = await prisma.like.findMany({

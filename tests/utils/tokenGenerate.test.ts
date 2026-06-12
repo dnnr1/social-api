@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
 import jwt from "jsonwebtoken";
-import tokenGenerate from "../../src/utils/tokenGenerate.js";
 
 vi.mock("jsonwebtoken");
 
@@ -8,11 +7,11 @@ describe("tokenGenerate", () => {
   it("should generate a token", async () => {
     vi.mocked(jwt.sign).mockReturnValue("token" as any);
 
-    process.env.JWT_SECRET = "secret";
+    const { generateAccessToken } = await import("../../src/utils/tokenGenerate.js");
 
-    const result = tokenGenerate({ data: "123" });
+    const result = generateAccessToken({ id: "user-1", role: "user" });
 
-    expect(jwt.sign).toHaveBeenCalledWith({ data: "123" }, "secret");
+    expect(jwt.sign).toHaveBeenCalledWith({ id: "user-1", role: "user" }, expect.any(String), { expiresIn: "15m" });
 
     expect(result).toBe("token");
   });

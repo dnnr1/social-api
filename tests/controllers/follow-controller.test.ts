@@ -57,12 +57,12 @@ describe("follow-controller", () => {
 
     vi.mocked(getFollowersService).mockResolvedValue(followers as any);
 
-    const req = { params: { id: "user-2" } } as any;
+    const req = { params: { id: "user-2" }, pagination: { skip: 0, limit: 20 } } as any;
     const res = createRes();
 
     await getFollowersController(req, res);
 
-    expect(getFollowersService).toHaveBeenCalledWith("user-2");
+    expect(getFollowersService).toHaveBeenCalledWith("user-2", 0, 20);
     expect(res.status).toHaveBeenCalledWith(HTTP_OK);
   });
 
@@ -71,12 +71,12 @@ describe("follow-controller", () => {
 
     vi.mocked(getFollowingService).mockResolvedValue(following as any);
 
-    const req = { params: { id: "user-1" } } as any;
+    const req = { params: { id: "user-1" }, pagination: { skip: 0, limit: 20 } } as any;
     const res = createRes();
 
     await getFollowingController(req, res);
 
-    expect(getFollowingService).toHaveBeenCalledWith("user-1");
+    expect(getFollowingService).toHaveBeenCalledWith("user-1", 0, 20);
     expect(res.status).toHaveBeenCalledWith(HTTP_OK);
   });
 

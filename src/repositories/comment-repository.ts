@@ -38,10 +38,16 @@ export async function findCommentByIdRepository(
   id: string,
 ): Promise<GetCommentResponseDTO | null> {
   const cacheKey = buildCacheKey("comment", "id", id);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<GetCommentResponseDTO | null>(cacheKey);
   if (cached) return cached;
 
-  return await prisma.comment.findUnique({ where: { id } });
+  const comment = await prisma.comment.findUnique({ where: { id } });
+
+  if (comment) {
+    await setCachedData(cacheKey, comment, 300);
+  }
+
+  return comment;
 }
 
 export async function findCommentsByPostIdRepository(
@@ -50,7 +56,7 @@ export async function findCommentsByPostIdRepository(
   limit: number = 20,
 ): Promise<GetPostCommentsResponseDTO[]> {
   const cacheKey = buildCacheKey("comment", "post", postId, `skip:${skip}`, `limit:${limit}`);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<GetPostCommentsResponseDTO[]>(cacheKey);
   if (cached) return cached;
 
   const comments = await prisma.comment.findMany({

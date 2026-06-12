@@ -85,6 +85,9 @@ describe("follow-repository", () => {
 
     expect(prismaMock.follow.findMany).toHaveBeenCalledWith({
       where: { followingId: "user-2" },
+      skip: 0,
+      take: 20,
+      orderBy: { created_at: "desc" },
     });
     expect(result).toEqual([baseFollow]);
   });
@@ -96,6 +99,9 @@ describe("follow-repository", () => {
 
     expect(prismaMock.follow.findMany).toHaveBeenCalledWith({
       where: { followerId: "user-1" },
+      skip: 0,
+      take: 20,
+      orderBy: { created_at: "desc" },
     });
     expect(result).toEqual([baseFollow]);
   });

@@ -2,6 +2,8 @@ import { prisma } from "../db.js";
 import type { CreateUserDTO, CreateUserResponseDTO } from "../dto/userDTO.js";
 import { getCachedData, setCachedData, invalidateCache, buildCacheKey } from "../utils/cache.js";
 
+type User = Awaited<ReturnType<typeof prisma.user.findUnique>>;
+
 export async function createUserRepository(
   data: CreateUserDTO,
 ): Promise<CreateUserResponseDTO> {
@@ -12,12 +14,12 @@ export async function createUserRepository(
   return user;
 }
 
-export async function findUserByEmailRepository(email: string) {
+export async function findUserByEmailRepository(email: string): Promise<User> {
   const cacheKey = buildCacheKey("user", "email", email);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<User>(cacheKey);
   if (cached) return cached;
 
-  const user = await prisma.user.findUnique({
+  const user: User = await prisma.user.findUnique({
     where: { email },
   });
 
@@ -28,12 +30,12 @@ export async function findUserByEmailRepository(email: string) {
   return user;
 }
 
-export async function findUserByIdRepository(id: string) {
+export async function findUserByIdRepository(id: string): Promise<User> {
   const cacheKey = buildCacheKey("user", "id", id);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<User>(cacheKey);
   if (cached) return cached;
 
-  const user = await prisma.user.findUnique({
+  const user: User = await prisma.user.findUnique({
     where: { id },
   });
 

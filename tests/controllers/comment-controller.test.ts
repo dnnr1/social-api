@@ -116,12 +116,12 @@ describe("comment-controller", () => {
 
     vi.mocked(getCommentsByPostService).mockResolvedValue(comments);
 
-    const req = { params: { id: "post-1" } } as any;
+    const req = { params: { id: "post-1" }, pagination: { skip: 0, limit: 20 } } as any;
     const res = createRes();
 
     await getPostCommentsController(req, res);
 
-    expect(getCommentsByPostService).toHaveBeenCalledWith("post-1");
+    expect(getCommentsByPostService).toHaveBeenCalledWith("post-1", 0, 20);
     expect(res.status).toHaveBeenCalledWith(HTTP_OK);
   });
 });

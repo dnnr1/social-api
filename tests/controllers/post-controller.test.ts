@@ -43,14 +43,14 @@ describe("post-controller", () => {
   });
 
   it("returns all posts for the current user", async () => {
-    const req = { user: { id: "user-1" } } as any;
+    const req = { user: { id: "user-1" }, pagination: { skip: 0, limit: 20 } } as any;
     const res = createRes();
 
     vi.mocked(getAllPosts).mockResolvedValue([basePost]);
 
     await getAllPostsController(req, res);
 
-    expect(getAllPosts).toHaveBeenCalledWith("user-1");
+    expect(getAllPosts).toHaveBeenCalledWith("user-1", 0, 20);
     expect(res.status).toHaveBeenCalledWith(HTTP_OK);
     expect(res.json).toHaveBeenCalledWith({
       code: HTTP_OK,

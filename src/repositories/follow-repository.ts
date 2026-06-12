@@ -39,7 +39,7 @@ export async function findFollowRepository(
   const { followerId, followingId } = data;
 
   const cacheKey = buildCacheKey("follow", followerId, followingId);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<FollowResponseDTO | null>(cacheKey);
   if (cached) return cached;
 
   const follow = await prisma.follow.findUnique({
@@ -61,7 +61,7 @@ export async function findFollowersByUserIdRepository(
   limit: number = 20,
 ): Promise<GetFollowersResponseDTO[]> {
   const cacheKey = buildCacheKey("follow", "followers", userId, `skip:${skip}`, `limit:${limit}`);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<GetFollowersResponseDTO[]>(cacheKey);
   if (cached) return cached;
 
   const followers = await prisma.follow.findMany({
@@ -82,7 +82,7 @@ export async function findFollowingByUserIdRepository(
   limit: number = 20,
 ): Promise<GetFollowingResponseDTO[]> {
   const cacheKey = buildCacheKey("follow", "following", userId, `skip:${skip}`, `limit:${limit}`);
-  const cached = await getCachedData(cacheKey);
+  const cached = await getCachedData<GetFollowingResponseDTO[]>(cacheKey);
   if (cached) return cached;
 
   const following = await prisma.follow.findMany({

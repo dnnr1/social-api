@@ -6,7 +6,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-
 
 export function validateUuidParam(paramName: string = "id") {
   return (req: Request, _: Response, next: NextFunction) => {
-    const value = req.params[paramName];
+    const value = req.params[paramName] as string | undefined;
     if (!value || !UUID_REGEX.test(value)) {
       throw new AppError(`Invalid ${paramName} format`, HTTP_BAD_REQUEST);
     }

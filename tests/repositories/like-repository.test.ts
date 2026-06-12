@@ -80,6 +80,9 @@ describe("like-repository", () => {
 
     expect(prismaMock.like.findMany).toHaveBeenCalledWith({
       where: { postId: "post-1" },
+      skip: 0,
+      take: 20,
+      orderBy: { created_at: "desc" },
     });
     expect(result).toEqual([baseLike]);
   });
