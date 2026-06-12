@@ -20,14 +20,14 @@ export async function getCommentService(commentId: string) {
   return comment;
 }
 
-export async function getCommentsByPostService(postId: string) {
+export async function getCommentsByPostService(postId: string, skip: number = 0, limit: number = 20) {
   const post = await findPostByIdRepository(postId);
 
   if (!post) {
     throw new AppError("Post not found", HTTP_NOT_FOUND);
   }
 
-  const comments = await findCommentsByPostIdRepository(postId);
+  const comments = await findCommentsByPostIdRepository(postId, skip, limit);
 
   return comments;
 }

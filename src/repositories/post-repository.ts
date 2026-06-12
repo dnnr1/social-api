@@ -39,6 +39,13 @@ export async function findPostByIdRepository(
 
 export async function findPostsByUserIdRepository(
   userId: string,
+  skip: number = 0,
+  limit: number = 20,
 ): Promise<GetAllPostsResponseDTO[]> {
-  return await prisma.post.findMany({ where: { userId } });
+  return await prisma.post.findMany({
+    where: { userId },
+    skip,
+    take: limit,
+    orderBy: { created_at: "desc" },
+  });
 }

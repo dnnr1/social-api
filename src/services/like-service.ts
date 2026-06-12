@@ -41,12 +41,12 @@ export async function unlikePostService(userId: string, postId: string) {
   return await deleteLikeRepository({ userId, postId });
 }
 
-export async function getPostLikesService(postId: string) {
+export async function getPostLikesService(postId: string, skip: number = 0, limit: number = 20) {
   const post = await findPostByIdRepository(postId);
 
   if (!post) {
     throw new AppError("Post not found", HTTP_NOT_FOUND);
   }
 
-  return await findLikesByPostIdRepository(postId);
+  return await findLikesByPostIdRepository(postId, skip, limit);
 }

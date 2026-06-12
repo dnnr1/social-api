@@ -35,8 +35,9 @@ export async function unfollowUserController(req: Request, res: Response) {
 
 export async function getFollowersController(req: Request, res: Response) {
   const userId = req.params.id as string;
+  const { skip = 0, limit = 20 } = req.pagination || {};
 
-  const followers = await getFollowersService(userId);
+  const followers = await getFollowersService(userId, skip, limit);
 
   return res.status(HTTP_OK).json({
     code: HTTP_OK,
@@ -47,8 +48,9 @@ export async function getFollowersController(req: Request, res: Response) {
 
 export async function getFollowingController(req: Request, res: Response) {
   const userId = req.params.id as string;
+  const { skip = 0, limit = 20 } = req.pagination || {};
 
-  const following = await getFollowingService(userId);
+  const following = await getFollowingService(userId, skip, limit);
 
   return res.status(HTTP_OK).json({
     code: HTTP_OK,

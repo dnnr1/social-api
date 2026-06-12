@@ -1,6 +1,7 @@
 import { Router } from "express";
 import authMiddleware from "./middlewares/auth.js";
 import { validateUuidParam } from "./middlewares/validateUuid.js";
+import { paginationMiddleware } from "./middlewares/pagination.js";
 import {
   createUserController,
   loginUserController,
@@ -40,18 +41,18 @@ route.use(authMiddleware);
 
 route.post("/post", createPostController);
 route.patch("/post/:id", validateUuidParam(), editPostController);
-route.get("/posts", getAllPostsController);
+route.get("/posts", paginationMiddleware(), getAllPostsController);
 route.get("/post/:id", validateUuidParam(), getPostController);
 route.post("/post/:id/comment", validateUuidParam(), createCommentController);
-route.get("/post/:id/comments", validateUuidParam(), getPostCommentsController);
+route.get("/post/:id/comments", validateUuidParam(), paginationMiddleware(), getPostCommentsController);
 route.get("/comment/:id", validateUuidParam(), getCommentController);
 route.patch("/comment/:id", validateUuidParam(), editCommentController);
 route.post("/post/:id/like", validateUuidParam(), likePostController);
 route.delete("/post/:id/like", validateUuidParam(), unlikePostController);
-route.get("/post/:id/likes", validateUuidParam(), getPostLikesController);
+route.get("/post/:id/likes", validateUuidParam(), paginationMiddleware(), getPostLikesController);
 route.post("/user/:id/follow", validateUuidParam(), followUserController);
 route.delete("/user/:id/follow", validateUuidParam(), unfollowUserController);
-route.get("/user/:id/followers", validateUuidParam(), getFollowersController);
-route.get("/user/:id/following", validateUuidParam(), getFollowingController);
+route.get("/user/:id/followers", validateUuidParam(), paginationMiddleware(), getFollowersController);
+route.get("/user/:id/following", validateUuidParam(), paginationMiddleware(), getFollowingController);
 
 export default route;

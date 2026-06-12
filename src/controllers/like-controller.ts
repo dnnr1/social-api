@@ -34,8 +34,9 @@ export async function unlikePostController(req: Request, res: Response) {
 
 export async function getPostLikesController(req: Request, res: Response) {
   const postId = req.params.id as string;
+  const { skip = 0, limit = 20 } = req.pagination || {};
 
-  const likes = await getPostLikesService(postId);
+  const likes = await getPostLikesService(postId, skip, limit);
 
   return res.status(HTTP_OK).json({
     code: HTTP_OK,

@@ -10,8 +10,9 @@ import { HTTP_CREATED, HTTP_OK } from "../constants/httpStatus.js";
 
 export async function getAllPostsController(req: Request, res: Response) {
   const userId = req.user!.id;
+  const { skip = 0, limit = 20 } = req.pagination || {};
 
-  const posts = await getAllPosts(userId);
+  const posts = await getAllPosts(userId, skip, limit);
 
   return res.status(HTTP_OK).json({
     code: HTTP_OK,

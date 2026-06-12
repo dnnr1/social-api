@@ -19,14 +19,14 @@ export async function getPostService(postId: string) {
   return post;
 }
 
-export async function getAllPosts(userId: string) {
+export async function getAllPosts(userId: string, skip: number = 0, limit: number = 20) {
   const user = await findUserByIdRepository(userId);
 
   if (!user) {
     throw new AppError("User not found", HTTP_NOT_FOUND);
   }
 
-  const posts = await findPostsByUserIdRepository(userId);
+  const posts = await findPostsByUserIdRepository(userId, skip, limit);
 
   return posts;
 }

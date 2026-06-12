@@ -22,8 +22,9 @@ export async function getCommentController(req: Request, res: Response) {
 
 export async function getPostCommentsController(req: Request, res: Response) {
   const postId = req.params.id as string;
+  const { skip = 0, limit = 20 } = req.pagination || {};
 
-  const comments = await getCommentsByPostService(postId);
+  const comments = await getCommentsByPostService(postId, skip, limit);
 
   return res.status(HTTP_OK).json({
     code: HTTP_OK,

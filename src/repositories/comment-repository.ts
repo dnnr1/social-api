@@ -37,6 +37,13 @@ export async function findCommentByIdRepository(
 
 export async function findCommentsByPostIdRepository(
   postId: string,
+  skip: number = 0,
+  limit: number = 20,
 ): Promise<GetPostCommentsResponseDTO[]> {
-  return await prisma.comment.findMany({ where: { postId } });
+  return await prisma.comment.findMany({
+    where: { postId },
+    skip,
+    take: limit,
+    orderBy: { created_at: "desc" },
+  });
 }

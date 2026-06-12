@@ -42,12 +42,26 @@ export async function findFollowRepository(
 
 export async function findFollowersByUserIdRepository(
   userId: string,
+  skip: number = 0,
+  limit: number = 20,
 ): Promise<GetFollowersResponseDTO[]> {
-  return await prisma.follow.findMany({ where: { followingId: userId } });
+  return await prisma.follow.findMany({
+    where: { followingId: userId },
+    skip,
+    take: limit,
+    orderBy: { created_at: "desc" },
+  });
 }
 
 export async function findFollowingByUserIdRepository(
   userId: string,
+  skip: number = 0,
+  limit: number = 20,
 ): Promise<GetFollowingResponseDTO[]> {
-  return await prisma.follow.findMany({ where: { followerId: userId } });
+  return await prisma.follow.findMany({
+    where: { followerId: userId },
+    skip,
+    take: limit,
+    orderBy: { created_at: "desc" },
+  });
 }

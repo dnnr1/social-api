@@ -58,22 +58,22 @@ export async function unfollowUserService(
   return await deleteFollowRepository({ followerId, followingId });
 }
 
-export async function getFollowersService(userId: string) {
+export async function getFollowersService(userId: string, skip: number = 0, limit: number = 20) {
   const user = await findUserByIdRepository(userId);
 
   if (!user) {
     throw new AppError("User not found", HTTP_NOT_FOUND);
   }
 
-  return await findFollowersByUserIdRepository(userId);
+  return await findFollowersByUserIdRepository(userId, skip, limit);
 }
 
-export async function getFollowingService(userId: string) {
+export async function getFollowingService(userId: string, skip: number = 0, limit: number = 20) {
   const user = await findUserByIdRepository(userId);
 
   if (!user) {
     throw new AppError("User not found", HTTP_NOT_FOUND);
   }
 
-  return await findFollowingByUserIdRepository(userId);
+  return await findFollowingByUserIdRepository(userId, skip, limit);
 }
