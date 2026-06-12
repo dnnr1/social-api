@@ -31,9 +31,12 @@ model Post {
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   visibility String    @default("public")
-  user       User      @relation(fields: [userId], references: [id])
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments   Comment[]
   likes      Like[]
+
+  @@index([userId], name: "post_user_id_idx")
+  @@index([created_at], name: "post_created_at_idx")
 }
 
 model Comment {
@@ -45,6 +48,10 @@ model Comment {
   updated_at DateTime @updatedAt
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId], name: "comment_post_id_idx")
+  @@index([userId], name: "comment_user_id_idx")
+  @@index([created_at], name: "comment_created_at_idx")
 }
 
 model Follow {
@@ -55,6 +62,9 @@ model Follow {
   following   User     @relation("UserFollowers", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@id([followerId, followingId])
+  @@index([followerId], name: "follow_follower_id_idx")
+  @@index([followingId], name: "follow_following_id_idx")
+  @@index([created_at], name: "follow_created_at_idx")
 }
 
 model Like {
@@ -65,4 +75,7 @@ model Like {
   post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([userId, postId])
+  @@index([userId], name: "like_user_id_idx")
+  @@index([postId], name: "like_post_id_idx")
+  @@index([created_at], name: "like_created_at_idx")
 }
