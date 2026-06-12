@@ -3,6 +3,7 @@ import authMiddleware from "./middlewares/auth.js";
 import {
   createUserController,
   loginUserController,
+  logoutUserController,
 } from "./controllers/user-controller.js";
 import {
   createPostController,
@@ -32,6 +33,7 @@ const route = Router();
 
 route.post("/register", createUserController);
 route.post("/login", loginUserController);
+route.post("/logout", logoutUserController);
 
 route.use(authMiddleware);
 
