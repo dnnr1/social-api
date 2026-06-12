@@ -6,7 +6,10 @@ import errorHandler from "./utils/errorHandler.js";
 import helmet from "helmet";
 import { config, validateConfig } from "./config/index.js";
 import { rateLimiter } from "./middlewares/rateLimiter.js";
+import { requestLogger } from "./middlewares/requestLogger.js";
 import { connectRedis } from "./utils/redis.js";
+import { prisma } from "./db.js";
+import { logger } from "./utils/logger.js";
 
 validateConfig();
 
@@ -25,18 +28,32 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(rateLimiter());
+app.use(requestLogger);
 app.use(baseAPI, route);
 app.use(errorHandler);
 
 app.get("/health", async (_, res) => {
-  res.json({ status: "OK", timestamp: new Date().toISOString() });
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    res.json({
+      status: "healthy",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+    });
+  } catch {
+    res.status(503).json({
+      status: "unhealthy",
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+    });
+  }
 });
 
 async function start(): Promise<void> {
   await connectRedis();
 
   app.listen(config.port, () => {
-    console.log(`app running on port: ${config.port}`);
+    logger.info("Server started", { port: config.port, environment: config.nodeEnv });
   });
 }
 
