@@ -4,11 +4,14 @@ import type {
   LikeDTO,
   LikeResponseDTO,
 } from "../dto/likeDTO.js";
+import { getCachedData, setCachedData, invalidateCache, buildCacheKey } from "../utils/cache.js";
 
 export async function createLikeRepository(
   data: LikeDTO,
 ): Promise<LikeResponseDTO> {
   const like = await prisma.like.create({ data });
+
+  await invalidateCache(buildCacheKey("like:*", data.postId));
 
   return like;
 }
@@ -24,6 +27,8 @@ export async function deleteLikeRepository(
     },
   });
 
+  await invalidateCache(buildCacheKey("like:*", postId));
+
   return like;
 }
 
@@ -32,11 +37,21 @@ export async function findLikeRepository(
 ): Promise<LikeResponseDTO | null> {
   const { userId, postId } = data;
 
-  return await prisma.like.findUnique({
+  const cacheKey = buildCacheKey("like", userId, postId);
+  const cached = await getCachedData(cacheKey);
+  if (cached) return cached;
+
+  const like = await prisma.like.findUnique({
     where: {
       userId_postId: { userId, postId },
     },
   });
+
+  if (like) {
+    await setCachedData(cacheKey, like, 300);
+  }
+
+  return like;
 }
 
 export async function findLikesByPostIdRepository(
@@ -44,10 +59,18 @@ export async function findLikesByPostIdRepository(
   skip: number = 0,
   limit: number = 20,
 ): Promise<GetPostLikesResponseDTO[]> {
-  return await prisma.like.findMany({
+  const cacheKey = buildCacheKey("like", "post", postId, `skip:${skip}`, `limit:${limit}`);
+  const cached = await getCachedData(cacheKey);
+  if (cached) return cached;
+
+  const likes = await prisma.like.findMany({
     where: { postId },
     skip,
     take: limit,
     orderBy: { created_at: "desc" },
   });
+
+  await setCachedData(cacheKey, likes, 300);
+
+  return likes;
 }

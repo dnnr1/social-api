@@ -6,6 +6,7 @@ import errorHandler from "./utils/errorHandler.js";
 import helmet from "helmet";
 import { config, validateConfig } from "./config/index.js";
 import { rateLimiter } from "./middlewares/rateLimiter.js";
+import { connectRedis } from "./utils/redis.js";
 
 validateConfig();
 
@@ -31,6 +32,12 @@ app.get("/health", async (_, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
-app.listen(config.port, () => {
-  console.log(`app running on port: ${config.port}`);
-});
+async function start(): Promise<void> {
+  await connectRedis();
+
+  app.listen(config.port, () => {
+    console.log(`app running on port: ${config.port}`);
+  });
+}
+
+start();
