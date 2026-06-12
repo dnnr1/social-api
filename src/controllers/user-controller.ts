@@ -5,21 +5,25 @@ import {
   loginUserService,
 } from "../services/user-service.js";
 import { userRegisterSchema } from "../schemas.js";
-import { HTTP_CREATED, HTTP_OK } from "../constants/httpStatus.js";
-import tokenGenerate from "../utils/tokenGenerate.js";
-import { TokenPayload } from "../types/types.js";
+import { HTTP_CREATED, HTTP_OK, HTTP_BAD_REQUEST } from "../constants/httpStatus.js";
+import AppError from "../appError.js";
+import { generateTokens, verifyRefreshToken, revokeRefreshToken } from "../utils/tokenGenerate.js";
 import { getCookieOptions } from "../utils/cookieOptions.js";
 
 export async function createUserController(req: Request, res: Response) {
   const user = userRegisterSchema.parse(req.body);
   const createdUser = await createUserService(user);
 
-  const token = tokenGenerate({
+  const tokens = await generateTokens({
     id: createdUser.id,
     role: createdUser.role,
-  } as TokenPayload);
+  });
 
-  res.cookie("token", token, getCookieOptions());
+  res.cookie("access_token", tokens.accessToken, getCookieOptions());
+  res.cookie("refresh_token", tokens.refreshToken, {
+    ...getCookieOptions(),
+    path: "/api/v1/auth",
+  });
 
   return res.status(HTTP_CREATED).json({
     code: HTTP_CREATED,
@@ -32,12 +36,16 @@ export async function loginUserController(req: Request, res: Response) {
   const data = userLoginSchema.parse(req.body);
   const user = await loginUserService(data);
 
-  const token = tokenGenerate({
+  const tokens = await generateTokens({
     id: user.id,
     role: user.role,
-  } as TokenPayload);
+  });
 
-  res.cookie("token", token, getCookieOptions());
+  res.cookie("access_token", tokens.accessToken, getCookieOptions());
+  res.cookie("refresh_token", tokens.refreshToken, {
+    ...getCookieOptions(),
+    path: "/api/v1/auth",
+  });
 
   return res.status(HTTP_OK).json({
     code: HTTP_OK,
@@ -46,11 +54,44 @@ export async function loginUserController(req: Request, res: Response) {
   });
 }
 
-export async function logoutUserController(_: Request, res: Response) {
-  res.clearCookie("token", getCookieOptions());
+export async function logoutUserController(req: Request, res: Response) {
+  const userId = req.user?.id;
+  if (userId) {
+    await revokeRefreshToken(userId);
+  }
+
+  res.clearCookie("access_token", getCookieOptions());
+  res.clearCookie("refresh_token", { ...getCookieOptions(), path: "/api/v1/auth" });
 
   return res.status(HTTP_OK).json({
     code: HTTP_OK,
     message: "User logged out successfully!",
+  });
+}
+
+export async function refreshTokenController(req: Request, res: Response) {
+  const token = req.cookies.refresh_token;
+
+  if (!token) {
+    throw new AppError("Refresh token is missing", HTTP_BAD_REQUEST);
+  }
+
+  const decoded = await verifyRefreshToken(token);
+
+  if (!decoded) {
+    throw new AppError("Invalid or expired refresh token", HTTP_BAD_REQUEST);
+  }
+
+  const tokens = await generateTokens({ id: decoded.id, role: decoded.role });
+
+  res.cookie("access_token", tokens.accessToken, getCookieOptions());
+  res.cookie("refresh_token", tokens.refreshToken, {
+    ...getCookieOptions(),
+    path: "/api/v1/auth",
+  });
+
+  return res.status(HTTP_OK).json({
+    code: HTTP_OK,
+    message: "Tokens refreshed successfully!",
   });
 }

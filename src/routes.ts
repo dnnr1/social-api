@@ -6,6 +6,7 @@ import {
   createUserController,
   loginUserController,
   logoutUserController,
+  refreshTokenController,
 } from "./controllers/user-controller.js";
 import {
   createPostController,
@@ -35,9 +36,14 @@ const route = Router();
 
 route.post("/register", createUserController);
 route.post("/login", loginUserController);
-route.post("/logout", logoutUserController);
+
+const authRoute = Router();
+authRoute.post("/refresh", refreshTokenController);
+route.use("/auth", authRoute);
 
 route.use(authMiddleware);
+
+route.post("/logout", logoutUserController);
 
 route.post("/post", createPostController);
 route.patch("/post/:id", validateUuidParam(), editPostController);
